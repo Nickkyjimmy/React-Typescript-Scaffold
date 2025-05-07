@@ -15,7 +15,7 @@ export default function DashboardPage() {
     const fetchData = async () => {
       try {
         if (user) {
-          const data = await getUserData(user.id)
+          const data = await getUserData(user.lastName)
           setUserData(data)
         }
       } catch (error) {
@@ -42,8 +42,8 @@ export default function DashboardPage() {
             <CardTitle>User Information</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>Name: {userData.name}</p>
-            <p>Email: {userData.email}</p>
+            {/* <p>Name: {userData.name}</p>
+            <p>Email: {userData.email}</p> */}
           </CardContent>
         </Card>
       ) : (

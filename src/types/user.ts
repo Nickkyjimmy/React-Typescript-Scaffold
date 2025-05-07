@@ -1,9 +1,14 @@
 export interface User {
-    id: string
-    name: string
-    email: string
-    role: "user" | "admin"
-    createdAt: string
-    updatedAt: string
-  }
-  
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  balance: number;
+}
+
+export interface CreateUserInput {
+  firstName: string;
+  lastName: string;
+  email: string;
+  balance: number;
+}
