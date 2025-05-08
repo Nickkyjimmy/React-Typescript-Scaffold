@@ -18,15 +18,17 @@ import { Label } from "@/components/ui/label";
 import { createProduct } from "@/services/action/create-product";
 import { toast } from "sonner";
 import type { Monitor } from "@/types/monitor";
+import { fetchMonitorData } from "@/services/action/use-monitor-data";
 
 type AddProductDialogProps = {
   setMonitors: (monitors: Monitor[]) => void;
   monitors: Monitor[];
+  className?: string;
 };
 
 export function AddProductDialog({
   setMonitors,
-  monitors,
+  className,
 }: AddProductDialogProps) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,10 +48,13 @@ export function AddProductDialog({
 
     toast.promise(onCreateMonitor, {
       loading: "Creating monitor...",
-      success: (response) => {
+      success: async () => {
         setOpen(false);
         setIsLoading(false);
-        setMonitors([...monitors, response.data]);
+
+        const fetchMonitors = await fetchMonitorData();
+        setMonitors(fetchMonitors);
+
         return "Monitor created successfully";
       },
       error: (error) => {
@@ -64,7 +69,7 @@ export function AddProductDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Add New Product</Button>
+        <Button className={className} variant="outline">Add New Product</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <form onSubmit={handleSubmit}>

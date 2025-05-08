@@ -34,7 +34,13 @@ export function ProductTable() {
             <TableHead className="w-1/6 text-center">Brand</TableHead>
             <TableHead className="w-1/6 text-center">Price</TableHead>
             <TableHead className="w-2/6 text-center">
-              <AddProductDialog setMonitors={setMonitors} monitors={monitors} />
+              <div className="w-full">
+                <AddProductDialog
+                  className="w-full bg-green-300"
+                  setMonitors={setMonitors}
+                  monitors={monitors}
+                />
+              </div>
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -45,6 +51,8 @@ export function ProductTable() {
                 key={key}
                 monitor={monitor}
                 className={`${key % 2 == 0 ? "bg-gray-100" : ""}`}
+                setMonitors={setMonitors}
+                monitors={monitors}
               />
             ))}
         </TableBody>
