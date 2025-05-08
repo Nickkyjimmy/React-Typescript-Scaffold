@@ -46,11 +46,11 @@ export function ProductTable() {
         </TableHeader>
         <TableBody>
           {monitors.length > 0 &&
-            monitors.map((monitor, key) => (
+            monitors.map((monitor, index) => (
               <ProductRow
-                key={key}
+                key={monitor.id}
                 monitor={monitor}
-                className={`${key % 2 == 0 ? "bg-gray-100" : ""}`}
+                className={`${index % 2 == 0 ? "bg-gray-100" : ""}`}
                 setMonitors={setMonitors}
                 monitors={monitors}
               />

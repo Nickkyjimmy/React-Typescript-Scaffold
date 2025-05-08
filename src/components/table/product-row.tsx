@@ -8,7 +8,6 @@ import { fetchMonitorData } from "@/services/action/use-monitor-data";
 
 type ProductRowProps = {
   monitor: Monitor;
-  key: number;
   className: string;
   setMonitors: (monitors: Monitor[]) => void;
   monitors: Monitor[];
@@ -16,7 +15,6 @@ type ProductRowProps = {
 
 function ProductRow({
   monitor,
-  key,
   className,
   setMonitors,
   monitors,
@@ -41,7 +39,7 @@ function ProductRow({
   };
 
   return (
-    <TableRow className={`w-full ${className}`} key={key}>
+    <TableRow className={`w-full ${className}`}>
       <TableCell className="w-1/6 text-center">{monitor.id}</TableCell>
       <TableCell className="w-1/6 text-center">{monitor.name}</TableCell>
       <TableCell className="w-1/6 text-center">{monitor.brand}</TableCell>
