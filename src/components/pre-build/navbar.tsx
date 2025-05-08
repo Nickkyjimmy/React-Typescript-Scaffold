@@ -12,7 +12,7 @@ export default function Navbar() {
         </Link>
 
         <nav className="flex items-center gap-6">
-          <Link to="/" className="text-sm font-medium hover:underline">
+          <Link to="/home" className="text-sm font-medium hover:underline">
             Home
           </Link>
           <Link to="/about" className="text-sm font-medium hover:underline">
