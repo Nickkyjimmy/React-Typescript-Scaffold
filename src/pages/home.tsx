@@ -41,7 +41,7 @@ export default function HomePage() {
   const [sortType, setSortType] = useState("ID");
 
   const handlePageChange = (newPage: number) => {
-    if (newPage >= 0 && newPage < pageSize) setPage(newPage);
+    if (newPage >= 0 && newPage < totalPages) setPage(newPage);
   };
   const handleSortChange = (value: string) => {
     setSortType(value); // Update sortType state when a new sort option is selected
@@ -49,7 +49,7 @@ export default function HomePage() {
 
   const fetchProducts = async () => {
     try {
-      const data = await MonitorService.getAllMonitor(page, pageSize, sortType);
+      const data = await MonitorService.getAllMonitor(page,pageSize, sortType);
       setProducts(data.content);
       setTotalPages(data.totalPages);
       setLoading(false);

@@ -45,26 +45,26 @@ const AddForm = ({ fetchProducts }: AddFormProps) => {
   });
 
   const onSubmit = async (data: FormData) => {
-    const newProduct = {
-      name: data.name,
-      brand: data.brand,
-      price: Number(data.price),
-    };
     try {
-      const response = await MonitorService.createMonitor(newProduct);
-      console.log("Product created successfully:", response);
-      if (response) {
-        alert("Product created successfully!");
-      } else {
-        alert("Failed to create product.");
-      }
-      form.reset(); // Reset the form after successful submission
-      await fetchProducts(); // Fetch the updated product list after adding a new product
-    } catch (error) {
+      const response = await MonitorService.createMonitor(data);
+      alert("Product created successfully!");
+      form.reset();
+      await fetchProducts();
+    } catch (error: any) {
       console.error("Error creating product:", error);
-    }
 
-    form.reset();
+      // Extract message if backend throws a 400 error with a string message
+      const errorMessage =
+        error?.response?.data || error?.message || "Failed to create product.";
+
+      // Set field-level error for name
+      form.setError("name", {
+        type: "manual",
+        message: errorMessage.includes("already exists")
+          ? errorMessage
+          : "Invalid product name",
+      });
+    }
   };
 
   return (
