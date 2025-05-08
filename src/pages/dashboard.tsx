@@ -1,35 +1,40 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
-import { getUserData } from "../services/user-service"
-import type { User } from "../types/user"
-import { useAuth } from "../hooks/use-auth"
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { getUserData } from "../services/user-service";
+import type { User } from "../types/user";
+import { useAuth } from "../hooks/use-auth";
 
 export default function DashboardPage() {
-  const [userData, setUserData] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-  const { user } = useAuth()
+  const [userData, setUserData] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (user) {
-          const data = await getUserData(user.id)
-          setUserData(data)
+          const data = await getUserData(user.id);
+          setUserData(data);
         }
       } catch (error) {
-        console.error("Error fetching user data:", error)
+        console.error("Error fetching user data:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchData()
-  }, [user])
+    fetchData();
+  }, [user]);
 
   if (loading) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   return (
@@ -50,5 +55,5 @@ export default function DashboardPage() {
         <p>No user data available</p>
       )}
     </div>
-  )
+  );
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { createContext, useState, useEffect, type ReactNode } from "react"
 import type { User } from "../types/user"
 import { login as apiLogin, logout as apiLogout, getCurrentUser } from "../services/auth-service"
 
@@ -11,6 +11,7 @@ interface AuthContextType {
   logout: () => Promise<void>
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -35,8 +36,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const user = await apiLogin(email, password)
-      setUser(user)
+      await apiLogin(email, password)
+      const currentUser = await getCurrentUser()
+      setUser(currentUser)
     } catch (error) {
       console.error("Login error:", error)
       throw error
@@ -56,10 +58,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={{ user, loading, login, logout }}>{children}</AuthContext.Provider>
 }
 
-export function useAuth() {
-  const context = useContext(AuthContext)
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider")
-  }
-  return context
-}
+// export function useAuth() {
+//   const context = useContext(AuthContext)
+//   if (context === undefined) {
+//     throw new Error("useAuth must be used within an AuthProvider")
+//   }
+//   return context
+// }
