@@ -126,7 +126,12 @@ const UpdateForm = ({ fetchProducts, product }: AddFormProps) => {
                 <FormItem>
                   <FormLabel>Price</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="Price ..." {...field} />
+                    <Input
+                      type="number"
+                      placeholder="Price ..."
+                      {...field}
+                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

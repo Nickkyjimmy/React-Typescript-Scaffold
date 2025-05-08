@@ -24,10 +24,7 @@ const ProductCell = ({ products, fetchProducts }: ProductCellProps) => {
       console.error("Error deleting product:", error);
     }
   };
-  const handleUpdate = async (product: MonitorType) => {
 
-
-  }
   return (
     <TableBody>
       {products.map((product, index) => (

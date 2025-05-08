@@ -25,9 +25,7 @@ import { DialogClose, DialogTrigger } from "@radix-ui/react-dialog";
 const formSchema = z.object({
   name: z.string().min(1, "Product name is required"),
   brand: z.string().min(1, "Brand is required"),
-  price: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-    message: "Price must be a positive number",
-  }),
+  price: z.number().min(0, "Price must be positve number"),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -42,7 +40,7 @@ const AddForm = ({ fetchProducts }: AddFormProps) => {
     defaultValues: {
       name: "",
       brand: "",
-      price: "",
+      price: 0,
     },
   });
 
@@ -125,7 +123,12 @@ const AddForm = ({ fetchProducts }: AddFormProps) => {
                 <FormItem>
                   <FormLabel>Price</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="Price ..." {...field} />
+                    <Input
+                      type="number"
+                      placeholder="Price ..."
+                      {...field}
+                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
