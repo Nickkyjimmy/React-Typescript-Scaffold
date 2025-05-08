@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom"
-import Navbar from "@/components/pre-build/navbar"
-import Footer from "@/components/pre-build/footer"
+import Navbar from "@/components/common/navbar"
+import Footer from "@/components/common/footer"
+import { Toaster } from "sonner";
 
 export default function MainLayout() {
   return (
@@ -8,6 +9,8 @@ export default function MainLayout() {
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-8">
         <Outlet />
+
+        <Toaster position="bottom-right" />
       </main>
       <Footer />
     </div>
