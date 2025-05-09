@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
+import { createContext, useEffect, useState, type ReactNode } from "react";
+import { AuthService } from "@/services/auth_service/auth-service";
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -13,9 +13,11 @@ export const AuthContext = createContext<AuthContextType>({
   loading: true,
 });
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+type AuthProviderProps = {
+  children: ReactNode;
+};
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [roles, setRoles] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,11 +25,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get("http://localhost:8081/api/auth/me", {
-          withCredentials: true,
-        });
+        const response = await AuthService.authenticate();
         setIsAuthenticated(true);
-        setRoles(response.data.roles);
+        // console.log("User roles:", response.roles);
+        setRoles(response.roles);
       } catch (error) {
         console.error("Error checking authentication:", error);
       } finally {

@@ -1,9 +1,4 @@
-export interface User {
-    id: string
-    name: string
-    email: string
-    role: "user" | "admin"
-    createdAt: string
-    updatedAt: string
-  }
-  
+export interface UserAuth {
+  email: string;
+  roles: string[];
+}
