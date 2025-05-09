@@ -86,7 +86,17 @@ export function AddProductDialog({
       },
       error: (error) => {
         setIsLoading(false);
-        return error?.response?.data?.message || "Failed to create monitor";
+
+        switch (error.response.status) {
+          case 401:
+            return "Unauthorized";
+          case 403:
+            return "Forbidden";
+          case 409:
+            return "Product name already exists, use a different name";
+          default:
+            return "Failed to create monitor";
+        }
       },
     });
   };

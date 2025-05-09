@@ -33,13 +33,13 @@ export default function Navbar() {
               }}
               className="text-sm font-medium hover:underline"
             >
-              <Link to="/" className="text-sm font-medium hover:underline">
+              <Link to="/" className="text-sm font-medium">
                 Logout
               </Link>
             </Button>
           ) : (
             <Button asChild> 
-              <Link to="/login" className="text-sm font-medium hover:underline">
+              <Link to="/login" className="text-sm font-medium">
                 Login
               </Link>
             </Button>

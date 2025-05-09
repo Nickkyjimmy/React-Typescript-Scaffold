@@ -94,7 +94,18 @@ export function UpdateProductDialog({
       },
       error: (error) => {
         setIsLoading(false);
-        return error?.response?.data?.message || "Failed to update monitor";
+        switch (error.response.status) {
+          case 401:
+            return "Unauthorized";
+          case 403:
+            return "Forbidden";
+          case 404:
+            return "Can't find monitor with id: " + monitor.id;
+          case 409:
+            return "Product name already exists, use a different name";
+          default:
+            return "Failed to update monitor";
+        }
       },
     });
   };

@@ -54,7 +54,16 @@ function ProductRow({
         return "Monitor deleted successfully";
       },
       error: (error) => {
-        return error?.response?.data?.message || "Failed to delete monitor";
+        switch (error.response.status) {
+          case 401:
+            return "Unauthorized";
+          case 403:
+            return "Forbidden";
+          case 404:
+            return "Can't find monitor with id: " + monitor.id;
+          default:
+            return "Failed to delete monitor";
+        }
       },
     });
   };
