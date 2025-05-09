@@ -1,8 +1,5 @@
-"use client";
-
-import type React from "react";
-import {useState} from "react";
-import {Button} from "@/components/ui/button";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -12,12 +9,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-import {createProduct} from "@/services/action/create-product";
-import {toast} from "sonner";
-import type {Monitor} from "@/types/monitor";
-import {fetchPaginatedMonitorData,} from "@/services/action/use-monitor-data";
+import { Input } from "@/components/ui/input";
+import { createProduct } from "@/services/action/create-product";
+import { toast } from "sonner";
+import type { Monitor } from "@/types/monitor";
+import { fetchPaginatedMonitorData } from "@/services/action/use-monitor-data";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  addProductFormSchema,
+  type AddProductFormSchema,
+} from "@/schemas/product-form-schema";
 
 type AddProductDialogProps = {
   setMonitors: (monitors: Monitor[]) => void;
@@ -44,30 +54,33 @@ export function AddProductDialog({
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const form = useForm({
+    resolver: zodResolver(addProductFormSchema),
+    defaultValues: {
+      name: "",
+      brand: "",
+      price: "",
+    },
+  });
+
+  const handleSubmit = async (data: AddProductFormSchema) => {
     setIsLoading(true);
-
-    const formData = new FormData(e.target as HTMLFormElement);
-    const monitorData = {
-      name: formData.get("name") as string,
-      brand: formData.get("brand") as string,
-      price: Number(formData.get("price")),
-    };
-
-    const onCreateMonitor = createProduct(monitorData);
-
+    const onCreateMonitor = createProduct(data);
     toast.promise(onCreateMonitor, {
       loading: "Creating monitor...",
       success: async () => {
         setOpen(false);
         setIsLoading(false);
-
-        const { data, totalPages, totalElements } = await fetchPaginatedMonitorData(pageNumber, pageSize, sortBy, sortOrder);
+        const { data, totalPages, totalElements } =
+          await fetchPaginatedMonitorData(
+            pageNumber,
+            pageSize,
+            sortBy,
+            sortOrder
+          );
         setMonitors(data);
         setTotalPages(totalPages);
         setTotalElements(totalElements);
-
         return "Monitor created successfully";
       },
       error: (error) => {
@@ -85,67 +98,96 @@ export function AddProductDialog({
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>Add New Product</DialogTitle>
-            <DialogDescription>
-              Fill in the details to add a new product to your inventory.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Name
-              </Label>
-              <Input
-                id="name"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)}>
+            <DialogHeader>
+              <DialogTitle>Add New Product</DialogTitle>
+              <DialogDescription>
+                Fill in the details to add a new product to your inventory.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-2 py-4">
+              <FormField
+                control={form.control}
                 name="name"
-                placeholder="Product name"
-                className="col-span-3"
-                required
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-4 items-center gap-2">
+                    <FormLabel className="text-right">Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Product name"
+                        className="col-span-3"
+                        {...field}
+                      />
+                    </FormControl>
+                    <div className="col-span-4 col-start-2">
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="brand" className="text-right">
-                Brand
-              </Label>
-              <Input
-                id="brand"
+              <FormField
+                control={form.control}
                 name="brand"
-                placeholder="Product brand"
-                className="col-span-3"
-                required
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-4 items-center gap-2">
+                    <FormLabel className="text-right">Brand</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Product brand"
+                        className="col-span-3"
+                        {...field}
+                      />
+                    </FormControl>
+                    <div className="col-span-4 col-start-2">
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="price" className="text-right">
-                Price
-              </Label>
-              <Input
-                id="price"
+              <FormField
+                control={form.control}
                 name="price"
-                type="number"
-                placeholder="0.00"
-                className="col-span-3"
-                min="0"
-                step="0.01"
-                required
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-4 items-center gap-2">
+                    <FormLabel className="text-right">Price</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="0.00"
+                        min="0"
+                        className="col-span-3"
+                        {...field}
+                        value={
+                          typeof field.value === "number" ||
+                          typeof field.value === "string"
+                            ? field.value
+                            : ""
+                        }
+                        onChange={(e) => field.onChange(e.target.value)}
+                      />
+                    </FormControl>
+                    <div className="col-span-4 col-start-2">
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
               />
             </div>
-          </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Creating..." : "Create Product"}
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? "Creating..." : "Create Product"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
