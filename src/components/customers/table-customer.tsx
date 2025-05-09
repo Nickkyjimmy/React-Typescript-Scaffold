@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import {
   Table,
   TableBody,
@@ -9,17 +10,32 @@ import {
 } from "@/components/ui/table";
 import type { User } from "@/types/user";
 import { Button } from "../ui/button";
-import { CustomerService } from "@/services/customer-service";
+import { CustomerService } from "@/services/product-service/customer-service";
+
+// type Customer = {
+//   id: number,
+//   firstName: string,
+//   lastName: string,
+//   email: string,
+//   balance: number
+// }
 
 type CustomerTableProps = {
+  setIsUpdated: (isUpdated: boolean) => void;
+  setCurCustomer: (customer: User) => void;
   customers: User[];
   fetchCustomer: () => void;
 };
 
 export default function CustomerTable({
+  setIsUpdated,
+  setCurCustomer,
   customers,
   fetchCustomer,
 }: CustomerTableProps) {
+
+  // const [curCustomer, setCurCustomer] = useState<Customer>()
+
   const handleDelete = async (customerId: number) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this customer?"
@@ -36,6 +52,19 @@ export default function CustomerTable({
       }
     }
   };
+
+  const handleUpdate = async (customerId: number) => {
+    try {
+      var cus = await CustomerService.getCustomerInfoById(customerId)
+      console.log(cus)
+      setCurCustomer(cus)
+      setIsUpdated(true)
+
+    } catch (error) {
+      console.error("Error updating customer: ", error)
+      alert("Failed to update current customer")
+    }
+  }
 
   return (
     <Table className="w-[75%] mx-auto">
@@ -57,6 +86,9 @@ export default function CustomerTable({
             <TableCell>{customer.lastName}</TableCell>
             <TableCell>{customer.email}</TableCell>
             <TableCell className="text-right">{customer.balance}</TableCell>
+            <TableCell className="text-right">
+              <Button onClick={() => handleUpdate(customer.id)}>Update</Button>
+            </TableCell>
             <TableCell className="text-right">
               <Button onClick={() => handleDelete(customer.id)}>Delete</Button>
             </TableCell>

@@ -1,54 +1,43 @@
-"use client"
+import React from "react";
+import { useAuth } from "@/hooks/use-auth";
 
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
-import { getUserData } from "../services/user-service"
-import type { User } from "../types/user"
-import { useAuth } from "../hooks/use-auth"
+const DashboardPage: React.FC = () => {
+  const { isAuthenticated, roles, loading } = useAuth();
 
-export default function DashboardPage() {
-  const [userData, setUserData] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-  const { user } = useAuth()
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (user) {
-          const data = await getUserData(user.lastName)
-          setUserData(data)
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [user])
-
-  if (loading) {
-    return <div>Loading...</div>
-  }
+  if (loading) return <div>Loading dashboard...</div>;
+  if (!isAuthenticated) return <div>Unauthorized</div>;
+  console.log("DASHBOARX PAGE", roles)
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-4xl font-bold">Dashboard</h1>
+    <div style={{ padding: "2rem" }}>
+      <h1>Welcome to Your Dashboard</h1>
+      <p>Your roles: {roles}</p>
 
-      {userData ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>User Information</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* <p>Name: {userData.name}</p>
-            <p>Email: {userData.email}</p> */}
-          </CardContent>
-        </Card>
-      ) : (
-        <p>No user data available</p>
-      )}
+      <div style={{ display: "flex", gap: "1rem", marginTop: "2rem" }}>
+        <div style={cardStyle}>
+          <h3>Users</h3>
+          <p>25</p>
+        </div>
+        <div style={cardStyle}>
+          <h3>Active Sessions</h3>
+          <p>12</p>
+        </div>
+        <div style={cardStyle}>
+          <h3>Alerts</h3>
+          <p>3</p>
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
+
+const cardStyle: React.CSSProperties = {
+  flex: 1,
+  padding: "1rem",
+  backgroundColor: "#f2f2f2",
+  borderRadius: "8px",
+  boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
+  textAlign: "center",
+};
+
+export default DashboardPage;

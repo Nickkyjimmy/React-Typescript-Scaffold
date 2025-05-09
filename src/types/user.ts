@@ -12,3 +12,7 @@ export interface CreateUserInput {
   email: string;
   balance: number;
 }
+export interface UserAuth {
+  email: string;
+  roles: string[];
+}
