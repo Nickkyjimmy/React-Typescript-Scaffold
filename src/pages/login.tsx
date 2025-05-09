@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { Button } from "../components/ui/button";
 import {
@@ -7,23 +9,49 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
 import type React from "react";
+import { useAuth } from "../context/auth-context";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginFormSchema, type LoginFormValues } from "../schemas/login-form-schema";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Form,
+} from "../components/ui/form";
 
 export function LoginPage({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+  const { login, loading } = useAuth();
+  const navigate = useNavigate();
 
-    const loginData = {
-      email: formData.get("email") as string,
-      password: formData.get("password") as string,
-    };
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-    console.log(loginData);
+  const onSubmit = async (data: LoginFormValues) => {
+    const onLogin = login(data);
+    toast.promise(onLogin, {
+      loading: "Logging in...",
+      success: () => {
+        navigate("/");
+        return "Logged in successfully";
+      },
+      error: (error) => {
+        return error?.response?.data?.message || "Failed to log in";
+      },
+    });
   };
 
   return (
@@ -33,41 +61,58 @@ export function LoginPage({
           <CardTitle className="text-2xl">Login</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={onSubmit}>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="Your Password"
-                  required
-                />
-              </div>
-              <Button type="submit" className="w-full">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col gap-6"
+            >
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="email">Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        id="email"
+                        type="text"
+                        placeholder="m@example.com"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="password">Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="Your Password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={loading || form.formState.isSubmitting}
+              >
                 Login
               </Button>
-            </div>
-            {/* <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <a href="#" className="underline underline-offset-4">
-                Sign up
-              </a>
-            </div> */}
-          </form>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </div>

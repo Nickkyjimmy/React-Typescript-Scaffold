@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../hooks/use-auth";
-import { UserRole } from "../../types/user-role";
+import { UserRole } from "../../types/user";
 import type { ReactNode } from "react";
 
 interface ProtectedRouteProps {
@@ -14,8 +14,15 @@ export default function ProtectedRoute({
 }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
 
+  console.log("[ProtectedRoute] user:", user, "loading:", loading);
+
   if (loading) return null;
-  if (!user || !accessRole.includes(user.role as UserRole)) {
+
+  if (
+    !user ||
+    !user.role ||
+    !accessRole.some((role) => user.role.includes(role))
+  ) {
     return <Navigate to="/login" replace />;
   }
   return <>{children}</>;

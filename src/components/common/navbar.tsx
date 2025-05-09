@@ -1,8 +1,12 @@
-"use client"
-
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
+import { useAuth } from "@/context/auth-context";
+import LoadingComponent from "../loading/loading";
+import { Button } from "../ui/button";
 
 export default function Navbar() {
+  const { user, loading, logout } = useAuth();
+
+  if (loading) return <LoadingComponent />;
 
   return (
     <header className="border-b">
@@ -22,9 +26,24 @@ export default function Navbar() {
             Dashboard
           </Link>
 
-          <Link to="/login" className="text-sm font-medium hover:underline">
-            Login
-          </Link>
+          {user ? (
+            <Button
+              onClick={() => {
+                logout();
+              }}
+              className="text-sm font-medium hover:underline"
+            >
+              <Link to="/" className="text-sm font-medium hover:underline">
+                Logout
+              </Link>
+            </Button>
+          ) : (
+            <Button asChild> 
+              <Link to="/login" className="text-sm font-medium hover:underline">
+                Login
+              </Link>
+            </Button>
+          )}
         </nav>
       </div>
     </header>

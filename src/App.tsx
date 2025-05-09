@@ -5,8 +5,8 @@ import AboutPage from "./pages/about";
 import DashboardPage from "./pages/dashboard";
 import NotFoundPage from "./pages/not-found";
 import { LoginPage } from "./pages/login";
-import ProtectedRoute from "./components/common/ProtectedRoute";
-import { UserRole } from "./types/user-role";
+import ProtectedRoute from "./components/routes/protected-route";
+import { UserRole } from "./types/user";
 
 const App = () => {
   return (

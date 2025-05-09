@@ -29,7 +29,7 @@ function SortDropdownMenu({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className={className}>
-          <ArrowUpDown className="mr-2 h-4 w-4" />
+          <ArrowUpDown className="size-4" />
           Sort by: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
         </Button>
       </DropdownMenuTrigger>
@@ -38,25 +38,25 @@ function SortDropdownMenu({
           className="flex items-center justify-between"
           onClick={() => updateUrlParams({ sortBy: "id", sortOrder })}
         >
-          ID {sortBy === "id" && <Check className="h-4 w-4" />}
+          ID {sortBy === "id" && <Check className="size-4" />}
         </DropdownMenuItem>
         <DropdownMenuItem
           className="flex items-center justify-between"
           onClick={() => updateUrlParams({ sortBy: "name", sortOrder })}
         >
-          Name {sortBy === "name" && <Check className="h-4 w-4" />}
+          Name {sortBy === "name" && <Check className="size-4" />}
         </DropdownMenuItem>
         <DropdownMenuItem
           className="flex items-center justify-between"
           onClick={() => updateUrlParams({ sortBy: "brand", sortOrder })}
         >
-          Brand {sortBy === "brand" && <Check className="h-4 w-4" />}
+          Brand {sortBy === "brand" && <Check className="size-4" />}
         </DropdownMenuItem>
         <DropdownMenuItem
           className="flex items-center justify-between"
           onClick={() => updateUrlParams({ sortBy: "price", sortOrder })}
         >
-          Price {sortBy === "price" && <Check className="h-4 w-4" />}
+          Price {sortBy === "price" && <Check className="size-4" />}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

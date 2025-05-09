@@ -71,6 +71,7 @@ export function AddProductDialog({
       success: async () => {
         setOpen(false);
         setIsLoading(false);
+        form.reset();
         const { data, totalPages, totalElements } =
           await fetchPaginatedMonitorData(
             pageNumber,
@@ -178,7 +179,10 @@ export function AddProductDialog({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  form.reset();
+                  setOpen(false);
+                }}
               >
                 Cancel
               </Button>
