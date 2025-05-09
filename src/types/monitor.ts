@@ -10,7 +10,7 @@ export interface Monitor {
 export interface CreateMonitorInput {
     name: string,
     brand: string,
-    price: number
+    price: number,
 }
 
 export interface PaginatedResponse<T> {
