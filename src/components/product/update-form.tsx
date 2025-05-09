@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import MonitorService from "@/services/product_service/monitor-service";
 import { DialogClose, DialogTrigger } from "@radix-ui/react-dialog";
 import type { MonitorType } from "@/types/monitor";
+import { useState, useEffect } from "react";
 
 const formSchema = z.object({
   name: z.string().min(1, "Product name is required"),
@@ -31,12 +32,12 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-type AddFormProps = {
+type UpdateFormProps = {
   fetchProducts: () => void;
   product: MonitorType;
 };
 
-const UpdateForm = ({ fetchProducts, product }: AddFormProps) => {
+const UpdateForm = ({ fetchProducts, product }: UpdateFormProps) => {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,32 +47,48 @@ const UpdateForm = ({ fetchProducts, product }: AddFormProps) => {
     },
   });
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Reset form and clear errors when dialog is opened
+  useEffect(() => {
+    if (isDialogOpen) {
+      form.reset({
+        name: product.name,
+        brand: product.brand,
+        price: product.price,
+      });
+      form.clearErrors(); // Clear any errors when dialog opens
+    }
+  }, [isDialogOpen, form, product]);
+
   const onSubmit = async (data: FormData) => {
     const updatedProduct = {
       name: data.name,
       brand: data.brand,
       price: Number(data.price),
     };
+
     try {
-      const response = await MonitorService.updateMonitor(
-        product.id,
-        updatedProduct
-      );
-      console.log("Product updated successfully:", response);
-      if (response) {
-        alert("Product updated successfully!");
-        fetchProducts();
-      } else {
-        alert("Failed to update product");
-      }
-    } catch (error) {
-      console.error("Error updating product:", error);
+      await MonitorService.updateMonitor(product.id, updatedProduct);
+      alert("Product updated successfully!");
+      fetchProducts();
+    } catch (error: any) {
+      console.error("Error update product:", error);
+
+      const errorMessage =
+        error?.response?.data || error?.message || "Failed to update product.";
+
+      form.setError("name", {
+        type: "manual",
+        message: errorMessage.includes("already exists")
+          ? errorMessage
+          : "Invalid product name",
+      });
     }
-    form.reset();
   };
 
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={(open) => setIsDialogOpen(open)}>
       <DialogTrigger asChild>
         <Button className="bg-blue-400 hover:bg-green-600 flex-1/2 text-white">
           Update
@@ -144,7 +161,7 @@ const UpdateForm = ({ fetchProducts, product }: AddFormProps) => {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => form.reset()}
+                    onClick={() => form.reset({ name: product.name, brand: product.brand, price: product.price })}
                   >
                     Cancel
                   </Button>

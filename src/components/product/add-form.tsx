@@ -21,11 +21,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import MonitorService from "@/services/product_service/monitor-service";
 import { DialogClose, DialogTrigger } from "@radix-ui/react-dialog";
+import { useState, useEffect } from "react";
 
 const formSchema = z.object({
   name: z.string().min(1, "Product name is required"),
   brand: z.string().min(1, "Brand is required"),
-  price: z.number().min(0, "Price must be positve number"),
+  price: z.number().min(0, "Price must be a positive number"),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -43,6 +44,16 @@ const AddForm = ({ fetchProducts }: AddFormProps) => {
       price: 0,
     },
   });
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Reset form and clear errors when dialog is opened
+  useEffect(() => {
+    if (isDialogOpen) {
+      form.reset();
+      form.clearErrors(); // Clear any errors when dialog opens
+    }
+  }, [isDialogOpen, form]);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -64,11 +75,12 @@ const AddForm = ({ fetchProducts }: AddFormProps) => {
           ? errorMessage
           : "Invalid product name",
       });
+
     }
   };
 
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={(open) => setIsDialogOpen(open)}>
       <DialogTrigger asChild>
         <Button className="bg-green-500 hover:bg-green-600 text-white w-full">
           Add Product

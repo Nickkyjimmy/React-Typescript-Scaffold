@@ -1,43 +1,35 @@
 import axios from "axios";
 
-
-const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true, // Send cookies along with requests
+const   API = axios.create({
+  baseURL: "http://localhost:8081/api",
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true, // Always send cookies
 });
 
-// Response interceptor: handle 401 and retry logic
-apiClient.interceptors.response.use(
-  (response) => response,
+// Add a response interceptor
+API.interceptors.response.use(
+  (response) => {
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
 
+    // If the error is due to an expired session and we haven't tried to refresh yet
     if (
-      error.response?.status === 401 &&
-      !originalRequest._retry // prevent infinite loop
+      error.response &&
+      error.response.status === 401 &&
+      !originalRequest._retry
     ) {
       originalRequest._retry = true;
-
-      try {
-        // If using refresh token flow, call it here
-        // const newToken = await refreshAccessToken();
-        // storeNewToken(newToken);
-        // originalRequest.headers.Authorization = `Bearer ${newToken}`;
-
-        // Retry original request
-        return apiClient(originalRequest);
-      } catch (refreshError) {
-        // Redirect if token refresh fails
-        window.location.href = "/login";
-        return Promise.reject(refreshError);
-      }
+      // Optionally, you could redirect to login here
+      window.location.href = "/login";
+      return Promise.reject(error);
     }
 
     return Promise.reject(error);
   }
 );
 
-export default apiClient;
+export default API;

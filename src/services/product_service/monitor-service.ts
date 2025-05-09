@@ -27,7 +27,9 @@ const MonitorService = {
   },
 
   async createMonitor(monitor: CreateMonitorRequest): Promise<MonitorType> {
-    const response = await axios.post(`${API_URL}/monitor`, monitor);
+    const response = await axios.post(`${API_URL}/monitor`, monitor, {
+      withCredentials: true, // Important: allows cookies to be stored
+    });
     return response.data;
   },
 
@@ -45,8 +47,15 @@ const MonitorService = {
     id: number,
     monitor: CreateMonitorRequest
   ): Promise<MonitorType> {
-    const response = await axios.put(`${API_URL}/monitor/${id}`, monitor);
-    return response.data;
+    try {
+      const response = await axios.put(`${API_URL}/monitor/${id}`, monitor, {
+        withCredentials: true, // Important: allows cookies to be stored
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error updating monitor:", error);
+      throw error; // Rethrow the error to handle it in the calling function
+    }
   },
 };
 

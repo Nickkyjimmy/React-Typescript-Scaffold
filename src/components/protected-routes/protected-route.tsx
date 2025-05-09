@@ -11,7 +11,7 @@ const ProtectedRoute = ({ children, requiredRoles }: ProtectedRouteProps) => {
 
   if (loading) return <div>Loading...</div>;
 
-  if (!isAuthenticated) return <Navigate to="/" replace />;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
 
   if (requiredRoles && !requiredRoles.some((role) => roles.includes(role))) {
     return <div>403 - Forbidden</div>;

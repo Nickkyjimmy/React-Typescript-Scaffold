@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import MainLayout from "./layouts/layout";
 import HomePage from "./pages/home";
 import AboutPage from "./pages/about";
@@ -11,8 +11,15 @@ const App = () => {
   return (
     <Routes>
       <Route path="/" element={<MainLayout />}>
-        <Route index element={<Login />} />
-        <Route path="home" element={<HomePage />} />
+        <Route path="login" element={<Login />} />
+        <Route
+          path="home"
+          element={
+            <ProtectedRoute requiredRoles={["USER", "ADMIN"]}>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="about"
           element={

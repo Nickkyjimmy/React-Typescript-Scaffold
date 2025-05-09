@@ -38,7 +38,7 @@ const ProductCell = ({ products, fetchProducts }: ProductCellProps) => {
           <TableCell>{product.price}</TableCell>
           <TableCell>
             <div className="flex gap-x-2">
-              <UpdateForm product={product} fetchProducts={fetchProducts}/>
+              <UpdateForm key={product.id} product={product} fetchProducts={fetchProducts}/>
               <Button
                 className="flex-1/2 bg-red-400"
                 onClick={() => handleDelete(product.id)}
