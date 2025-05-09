@@ -24,7 +24,7 @@ import type { Monitor } from "@/types/monitor";
 const monitorFormSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
   brand: z.string().min(1, { message: "Brand is required" }),
-  price: z.number().min(0, { message: "Price must be a positive number" }),
+  price: z.number().min(1, { message: "Price must be at least 1" }).max(10000, { message: "Price must be at most 10000" }),
 });
 
 type monitorFormProps = {

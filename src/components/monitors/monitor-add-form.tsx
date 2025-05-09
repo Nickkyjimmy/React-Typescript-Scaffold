@@ -21,10 +21,20 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { MonitorService } from "@/services/product-service/monitor-service";
 import { PaginationDemo } from "./monitor_page";
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
 const monitorFormSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
   brand: z.string().min(1, { message: "Brand is required" }),
-  price: z.number().min(1, { message: "Price must be at least 1" }).max(10000, {message: "Price must be less than 10000"}),
+  price: z.number().min(1, { message: "Price must be at least 1" }).max(10000, { message: "Price must be less than 10000" }),
 });
 
 type monitorFormProps = {
@@ -115,6 +125,35 @@ export default function MonitorForm({
                     <Input type="number" placeholder="Price" {...field} onChange={(e) => {
                       field.onChange(e.target.valueAsNumber)
                     }} />
+                  </FormControl>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+
+          <FormField
+            control={form.control}
+            name="brand"
+            render={({ field }) => (
+              <FormItem>
+                <div className='flex flex-row gap-x-4'>
+                  <FormLabel>Discount</FormLabel>
+                  <FormControl>
+                    <Select>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select discount" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Discount</SelectLabel>
+                          <SelectItem value="0">No Discount</SelectItem>
+                          <SelectItem value="0.5">Spring Discount (-50%)</SelectItem>
+                          <SelectItem value="0.25">Summer Discount (-25%)</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                 </div>
                 <FormMessage />
