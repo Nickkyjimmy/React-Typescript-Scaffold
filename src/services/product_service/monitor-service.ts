@@ -19,6 +19,7 @@ const MonitorService = {
         pageSize,
         sortBy,
       },
+      withCredentials: true, // Important: allows cookies to be stored
     });
 
     console.log("Response data:", response.data);

@@ -10,17 +10,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AuthService } from "@/services/auth_service/auth-service";
+import { useAuth } from "@/hooks/use-auth";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const { checkAuth } = useAuth();
   const handleLogin = async (e: any) => {
     e.preventDefault();
     console.log("Login button clicked", { username, password });
     try {
       const response = await AuthService.login(username, password);
       console.log("Login response:", response);
+      await checkAuth(); // recheck auth after login
       alert(response.message || "Login successful!");
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed");
