@@ -1,4 +1,4 @@
-import { ProductTable } from "@/components/table/product-table";
+import ProductTableContainer from "@/components/table/product-table-containter";
 
 export default function HomePage() {
 
@@ -7,6 +7,6 @@ export default function HomePage() {
     //   <h1 className="text-4xl font-bold">Welcome to Our App</h1>
     //   <p className="text-muted-foreground">This is a starter template for your React TypeScript project.</p>
     // </div>
-    <ProductTable />
+    <ProductTableContainer />
   )
 }

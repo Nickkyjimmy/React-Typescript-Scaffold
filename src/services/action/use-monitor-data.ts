@@ -5,3 +5,23 @@ export const fetchMonitorData = async () => {
 
   return response.data;
 };
+
+export const fetchPaginatedMonitorData = async (
+  pageNumber: number,
+  pageSize: number,
+  sortBy: string,
+  sortOrder: string
+) => {
+  const response = await API.get("/product/monitors", {
+    params: {
+      pageNumber,
+      pageSize,
+      sortBy,
+      sortOrder,
+    },
+  });
+
+  const { content: data, totalPages, totalElements } = response.data;
+
+  return { data, totalPages, totalElements };
+};

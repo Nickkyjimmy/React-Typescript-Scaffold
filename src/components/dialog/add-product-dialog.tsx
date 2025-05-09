@@ -1,9 +1,8 @@
 "use client";
 
 import type React from "react";
-
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import {useState} from "react";
+import {Button} from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -13,22 +12,34 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { createProduct } from "@/services/action/create-product";
-import { toast } from "sonner";
-import type { Monitor } from "@/types/monitor";
-import { fetchMonitorData } from "@/services/action/use-monitor-data";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {createProduct} from "@/services/action/create-product";
+import {toast} from "sonner";
+import type {Monitor} from "@/types/monitor";
+import {fetchPaginatedMonitorData,} from "@/services/action/use-monitor-data";
 
 type AddProductDialogProps = {
   setMonitors: (monitors: Monitor[]) => void;
   monitors: Monitor[];
+  pageNumber: number;
+  pageSize: number;
+  setTotalPages: (totalPages: number) => void;
+  setTotalElements: (totalElements: number) => void;
   className?: string;
+  sortBy: string;
+  sortOrder: string;
 };
 
 export function AddProductDialog({
   setMonitors,
   className,
+  pageNumber,
+  pageSize,
+  setTotalPages,
+  setTotalElements,
+  sortBy,
+  sortOrder,
 }: AddProductDialogProps) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,16 +63,16 @@ export function AddProductDialog({
         setOpen(false);
         setIsLoading(false);
 
-        const fetchMonitors = await fetchMonitorData();
-        setMonitors(fetchMonitors);
+        const { data, totalPages, totalElements } = await fetchPaginatedMonitorData(pageNumber, pageSize, sortBy, sortOrder);
+        setMonitors(data);
+        setTotalPages(totalPages);
+        setTotalElements(totalElements);
 
         return "Monitor created successfully";
       },
       error: (error) => {
         setIsLoading(false);
-        const message =
-          error?.response?.data?.message || "Failed to create monitor";
-        return message;
+        return error?.response?.data?.message || "Failed to create monitor";
       },
     });
   };
@@ -69,7 +80,9 @@ export function AddProductDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className={className} variant="outline">Add New Product</Button>
+        <Button className={className} variant="outline">
+          Add New Product
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <form onSubmit={handleSubmit}>

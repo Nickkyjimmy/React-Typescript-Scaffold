@@ -1,9 +1,8 @@
 "use client";
 
 import type React from "react";
-
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import {useState} from "react";
+import {Button} from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -13,24 +12,36 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
-import type { Monitor } from "@/types/monitor";
-import { updateProduct } from "@/services/action/update-product";
-import { fetchMonitorData } from "@/services/action/use-monitor-data";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {toast} from "sonner";
+import type {Monitor} from "@/types/monitor";
+import {updateProduct} from "@/services/action/update-product";
+import {fetchPaginatedMonitorData} from "@/services/action/use-monitor-data";
 
 type UpdateProductDialogProps = {
   setMonitors: (monitors: Monitor[]) => void;
   monitors: Monitor[];
+  pageNumber: number;
+  pageSize: number;
+  setTotalPages: (totalPages: number) => void;
+  setTotalElements: (totalElements: number) => void;
   className?: string;
   monitor: Monitor;
+  sortBy: string;
+  sortOrder: string;
 };
 
 export function UpdateProductDialog({
   setMonitors,
   className,
   monitor,
+  pageNumber,
+  pageSize,
+  setTotalPages,
+  setTotalElements,
+  sortBy,
+  sortOrder,
 }: UpdateProductDialogProps) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,16 +68,16 @@ export function UpdateProductDialog({
         setOpen(false);
         setIsLoading(false);
 
-        const fetchMonitors = await fetchMonitorData();
-        setMonitors(fetchMonitors);
+        const { data, totalPages, totalElements } = await fetchPaginatedMonitorData(pageNumber, pageSize, sortBy, sortOrder);
+        setMonitors(data);
+        setTotalPages(totalPages);
+        setTotalElements(totalElements);
 
         return "Monitor updated successfully";
       },
       error: (error) => {
         setIsLoading(false);
-        const message =
-          error?.response?.data?.message || "Failed to update monitor";
-        return message;
+        return error?.response?.data?.message || "Failed to update monitor";
       },
     });
   };

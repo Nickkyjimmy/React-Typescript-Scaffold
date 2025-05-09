@@ -1,16 +1,23 @@
-import { TableCell, TableRow } from "@/components/ui/table";
-import type { Monitor } from "@/types/monitor";
-import { Button } from "../ui/button";
-import { deleteProduct } from "@/services/action/delete-product";
-import { toast } from "sonner";
-import { UpdateProductDialog } from "../dialog/update-product-dialog";
-import { fetchMonitorData } from "@/services/action/use-monitor-data";
+import {TableCell, TableRow} from "@/components/ui/table";
+import type {Monitor} from "@/types/monitor";
+import {Button} from "../ui/button";
+import {deleteProduct} from "@/services/action/delete-product";
+import {toast} from "sonner";
+import {UpdateProductDialog} from "../dialog/update-product-dialog";
+import {fetchPaginatedMonitorData} from "@/services/action/use-monitor-data";
 
 type ProductRowProps = {
   monitor: Monitor;
   className: string;
   setMonitors: (monitors: Monitor[]) => void;
   monitors: Monitor[];
+  pageNumber: number;
+  pageSize: number;
+  setTotalPages: (totalPages: number) => void;
+  setTotalElements: (totalElements: number) => void;
+  onPageChange: (newPage: number) => void;
+  sortBy: string;
+  sortOrder: string;
 };
 
 function ProductRow({
@@ -18,22 +25,36 @@ function ProductRow({
   className,
   setMonitors,
   monitors,
+  pageNumber,
+  pageSize,
+  setTotalPages,
+  setTotalElements,
+  onPageChange,
+  sortBy,
+  sortOrder,
 }: ProductRowProps) {
   const handleDelete = () => {
-    const onCreateMonitor = deleteProduct(monitor.id);
+    const onDeleteMonitor = deleteProduct(monitor.id);
 
-    toast.promise(onCreateMonitor, {
+    toast.promise(onDeleteMonitor, {
       loading: "Deleting monitor...",
       success: async () => {
-        const fetchMonitors = await fetchMonitorData();
-        setMonitors(Array.isArray(fetchMonitors) ? fetchMonitors : []);
+        const { data, totalPages, totalElements } =
+          await fetchPaginatedMonitorData(pageNumber, pageSize, sortBy, sortOrder);
+
+        if (data.length === 0 && pageNumber > 0) {
+          onPageChange(pageNumber - 1);
+          return "Monitor deleted successfully";
+        }
+
+        setMonitors(Array.isArray(data) ? data : []);
+        setTotalPages(totalPages);
+        setTotalElements(totalElements);
 
         return "Monitor deleted successfully";
       },
       error: (error) => {
-        const message =
-          error?.response?.data?.message || "Failed to delete monitor";
-        return message;
+        return error?.response?.data?.message || "Failed to delete monitor";
       },
     });
   };
@@ -51,6 +72,12 @@ function ProductRow({
             setMonitors={setMonitors}
             monitors={monitors}
             monitor={monitor}
+            pageNumber={pageNumber}
+            pageSize={pageSize}
+            setTotalPages={setTotalPages}
+            setTotalElements={setTotalElements}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
           />
           <Button
             variant="destructive"
